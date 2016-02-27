@@ -1,6 +1,6 @@
 #!/usr/bin/env python 
 
-#Use ceoff files created by SHLoader to extract grids in S velocity peturbation per depth, and write each grid to a file, which should be exactly the same
+#Use coeff files created by SHLoader to extract grids in S velocity peturbation per depth, and write each grid to a file, which should be exactly the same
 #in format at the out.dat file. This will then be used by Extraction scripts. 
 
 import sys
@@ -9,9 +9,6 @@ from pyshtools import MakeGridDH
 import glob
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.basemap import shiftgrid
-#for spherical harmonics transform
-
 
 
 def ArrangeCoeffFiles(coeffsdir):
@@ -96,18 +93,14 @@ def Append2master(openmasterfile,coeffsdir,lmin,lmax):
 
 
 
-
-
-
-
-
-
 if __name__ == '__main__':
 
 	#ArrangeCoeffFiles('../coeffs')
 
+	#Open a file yo output the results to
 	out = open('test.dat','w')
 
+	#Run the main functtion to generate the grids from these coefficients (from llmax to llmin)
 	Append2master(out,'../coeffs',0,89)
 
 
