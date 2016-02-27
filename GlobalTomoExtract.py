@@ -18,7 +18,7 @@ import Absolute_Temps as AT
 def main():
 
 	'''
-	
+
 	Workflow is as follows
 	> Read data from tomo input file on format rad lon lat V1 V2 etc, where lon varies before lat and rad varies last
 	> Use this data to make a 3D interpolation function
@@ -37,7 +37,7 @@ def main():
 	userinput = parser.parse_args()
 
 	#Basename for the output file
-	OutfileID='ASPECT_tomoglobe_absolutetemps_mth1'
+	OutfileID='ASPECT_tomoglobe_absolutetemps_L1_L5'
 
 	if userinput.userdatafile == 'NONE':
 		extractfromdataset()
@@ -73,7 +73,7 @@ def main():
 	#-----------------------------------------------------------
 	#Generate interpolation function using the input grid 
 	#-----------------------------------------------------------
-	interpfunc,LATGRID = Geninterpgrid(lines,Mulval=M)
+	interpfunc,LATGRID = Geninterpgrid(lines,fcount,Mulval=M)
 
 	#-----------------------------------------------------------
 	#Now make out grids and interpolate using the provided function 
@@ -203,7 +203,7 @@ def main():
 
 
 
-def Geninterpgrid(lines,Mulval=1):
+def Geninterpgrid(lines,fcount,Mulval=1):
 
 	'''
 	-----------------------------------------------------------

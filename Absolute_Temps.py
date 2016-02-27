@@ -80,8 +80,6 @@ def extracteta(etafile):
         rads.append(rad)
         etas.append(eta)
 
-    print rads,
-    print etas
     return (np.array(list(reversed(rads))), np.array(list(reversed(etas))))
 
 
