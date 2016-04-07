@@ -39,6 +39,65 @@ def read_coeffs(fname,nl):
         coeffs[1,l,:l+1] = [float(c) for c in blm]
     return coeffs
 
+
+def Taper_harmonic_coeffs(coeffs,llmin,llmax):
+	'''Apply a simple cosine taper to the spherical harmonics list'''
+
+	#Lets have the taper span 20 degrees, so we start from lmax-6 and end at lmax+6
+
+	#####First taper at the 'maximum' end 
+	thw = 20 #half width of the cosine taper, in degrees
+
+	if llmax < 80:
+
+		print 'Tapering llmax with half width: %g' %thw
+
+		#any coeffs beyond the upper limit of the taper are set to zero
+		coeffs[:,llmax+thw+1:,:] = 0
+		taperstart = llmax - thw
+
+		#apply the taper to all coeffs between llmax-thw and llmax+thw
+		for coeffnumber in range(0,thw*2):
+			cf = taperstart + coeffnumber
+
+			#print 'Coeff_number, multiplying factor'
+			#print cf, np.cos(2*np.pi*coeffnumber/(thw*8))
+
+			A0 = coeffs[:,cf,:].copy()
+			coeffs[:,cf,:] = A0*np.cos(2*np.pi*coeffnumber/(thw*8))
+
+	else:
+		print 'Trying to taper to coefficients beyond the length of the array!'
+		sys.exit(1)
+
+
+	#####Now taper at the minumum end, if necassary
+	if llmin > 30:
+
+		print 'tapering llmin with half width: %g' %thw
+
+		#any coeffs beyond the upper limit of the taper are set to zero
+		coeffs[:,:llmin-thw,:] = 0
+		taperstart = llmin + thw
+		print llmin
+		print taperstart
+
+		#apply the taper to all coeffs between llmax-thw and llmax+thw
+		for coeffnumber in range(0,thw*2):
+			cf = taperstart - coeffnumber
+
+			#print 'Coeff_number, multiplying factor'
+			#print cf, np.cos(2*np.pi*coeffnumber/(thw*8))
+
+			A0 = coeffs[:,cf,:].copy()
+			coeffs[:,cf,:] = A0*np.cos(2*np.pi*coeffnumber/(thw*8))
+
+	else:
+		print 'Trying to taper to coefficients beyond the bottom of the array!\n Skipping bottom taper'
+
+
+	return coeffs
+
 def Append2master(openmasterfile,coeffsdir,lmin,lmax):
 	'''Loop though ordered coefficient files, cut out coefficients outside the provided range, make global grid and append points to the 'master' file'''
 
@@ -55,7 +114,12 @@ def Append2master(openmasterfile,coeffsdir,lmin,lmax):
 		rad = float(coeffile.split('_')[1].split('.')[0])
 		print 'Dealing with radius: %g' %rad
 
-		coeffs = read_coeffs(coeffile,nl=90)
+		coeffsuntapered = read_coeffs(coeffile,nl=90)
+
+		#Window just the selected coeffs (apply cosine taper)
+		#coeffs[:,:lmin,:] = 0
+		#coeffs[:,lmax+1:,:]=0
+		coeffs = Taper_harmonic_coeffs(coeffsuntapered,lmin,lmax)
 
 		#make global grid
 		grid  = MakeGridDH(coeffs,sampling=2)
@@ -98,10 +162,10 @@ if __name__ == '__main__':
 	#ArrangeCoeffFiles('../coeffs')
 
 	#Open a file yo output the results to
-	out = open('test.dat','w')
+	out = open('test_L1_L20.dat','w')
 
 	#Run the main functtion to generate the grids from these coefficients (from llmax to llmin)
-	Append2master(out,'../coeffs',0,89)
+	Append2master(out,'../coeffs',0,20)
 
 
 

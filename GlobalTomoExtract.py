@@ -37,7 +37,7 @@ def main():
 	userinput = parser.parse_args()
 
 	#Basename for the output file
-	OutfileID='ASPECT_tomoglobe_absolutetemps_L1_L5'
+	OutfileID='ASPECT_tomoglobe_absolutetemps_L1_L20'
 
 	if userinput.userdatafile == 'NONE':
 		extractfromdataset()
@@ -66,14 +66,14 @@ def main():
 		fcount = -1
 		M = 100
 	else:
-		print 'User input data type not recognized!'
+		print 'User input data type not recognized!\n Use HPertS to extract from a file that has been created using the script Extract_from_coeffs.py'
 		sys.exit(1)
 
 
 	#-----------------------------------------------------------
 	#Generate interpolation function using the input grid 
 	#-----------------------------------------------------------
-	interpfunc,LATGRID = Geninterpgrid(lines,fcount,Mulval=M)
+	interpfunc,LATGRD = Geninterpgrid(lines,fcount,Mulval=M)
 
 	#-----------------------------------------------------------
 	#Now make out grids and interpolate using the provided function 
